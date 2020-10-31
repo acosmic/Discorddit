@@ -15,8 +15,6 @@ BOT_PREFIX = '.'
 bot = commands.Bot(command_prefix = BOT_PREFIX)
 bot.remove_command('help')
 
-
-
 TOKEN = settings.getToken()
 redditTrigger = 'https://www.reddit.com/r'
 

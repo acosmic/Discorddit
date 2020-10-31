@@ -14,10 +14,8 @@ bot.remove_command('help')
 
 def getToken():
     load_dotenv()
-    TOKEN = os.getenv('DISCORD_TOKEN')  # ColdDarkBot
-    TOKEN2 = os.getenv('DISCORD_TOKEN2')  # ColdDarkGames
-    TOKEN3 = os.getenv('DISCORD_TOKEN3')  # Discorddit
-    return TOKEN3
+    TOKEN = os.getenv('DISCORD_TOKEN')  # Discorddit
+    return TOKEN
 
 
 def getReddit():
@@ -95,16 +93,18 @@ async def dank(ctx):
         await ctx.send(embed=dank_embed)
 
 
+
 async def betterEmbed(messsage, submissionUrl):
+    emojis = ['👍','👎','😂','😢','🖕',]
     post = reddit.submission(url=submissionUrl)
-    msg = messsage
     subtext = submissionUrl.split('/')[-5]
     sub = reddit.subreddit(str(subtext))
     posttitle = post.title
     posturl = post.url
     upvotes = post.ups
+    numComments = post.num_comments
     subicon = sub.icon_img
-    body = post.selftext
+    body = (post.selftext[:2045] + '...') if len(post.selftext) > 2045 else post.selftext
     perma = "(https://www.reddit.com" + post.permalink + ")"
     permatitle = "[" + posttitle + "]" + perma
     perma_embed = "[See on Reddit](" + perma + ")"
@@ -121,36 +121,31 @@ async def betterEmbed(messsage, submissionUrl):
             "v.redd.it") != -1:
         dank_embed = discord.Embed(
             colour=discord.Colour(0x190125),
-            # title= posttitle,
+            title= posttitle,
+            url=posturl,
             # description=
         )
-        # dank_embed.set_author(name="r/" + str(sub), icon_url=subicon)
-        # dank_embed.set_image(url=memeurl)
-        dank_embed.set_footer(text=str(upvotes) + ' Up Votes')
-        # dank_embed.set_thumbnail(url=subicon)
-        dank_embed.add_field(name='\u200b', value=permatitle)
-        await msg.channel.send(embed=dank_embed)
-        await msg.channel.send(posturl)
-    elif 'https://www.reddit.com/r/' in posturl is True:
-        dank_embed = discord.Embed(
-            colour=discord.Colour(0x190125),
-            title=posttitle,
-            description=body
-        )
-        dank_embed.set_author(name="r/" + str(sub), icon_url=subicon)
-        dank_embed.set_footer(text=str(upvotes) + ' Up Votes')
-        dank_embed.add_field(name='\u200b', value=permatitle)
-        await msg.channel.send(embed=dank_embed)
+        dank_embed.set_author(name= str(messsage.author), icon_url= messsage.author.avatar_url)
+        dank_embed.set_image(url=thumbnail)
+        dank_embed.set_footer(text=str(upvotes) + ' Up Votes and ' + str(numComments) + ' Comments')
+        # dank_embed.set_thumbnail(url=thumbnail)
+        msg = await messsage.channel.send(embed=dank_embed)
+        # await messsage.channel.send(posturl)
+        for i in emojis:
+            await msg.add_reaction(i)
     else:
         dank_embed = discord.Embed(
             colour=discord.Colour(0x190125),
-            # title= memetitle,
-            # description=
+            title= posttitle,
+            url= posturl,
+            description= body
         )
-        dank_embed.set_author(name="r/" + str(sub), icon_url=subicon)
-
-        dank_embed.set_footer(text=str(upvotes) + ' Up Votes')
-        # dank_embed.set_thumbnail(url=subicon)
+        dank_embed.set_author(name= str(messsage.author), icon_url= messsage.author.avatar_url)
+        dank_embed.set_footer(text="r/" + str(sub) +" - " +str(upvotes) + ' Up Votes and ' + str(numComments) + ' Comments', icon_url=subicon)
+        # dank_embed.set_thumbnail(url=messsage.author.avatar_url)
         dank_embed.set_image(url=posturl)
-        dank_embed.add_field(name='\u200b', value=permatitle)
-        await msg.channel.send(embed=dank_embed)
+        msg = await messsage.channel.send(embed=dank_embed)
+        for i in emojis:
+            await msg.add_reaction(i)
+
+    

@@ -95,7 +95,7 @@ async def dank(ctx):
 
 
 async def betterEmbed(messsage, submissionUrl):
-    emojis = ['👍','👎','😂','😢','🖕',]
+    emojis = ['👍','👎','😂',]
     post = reddit.submission(url=submissionUrl)
     subtext = submissionUrl.split('/')[-5]
     sub = reddit.subreddit(str(subtext))
